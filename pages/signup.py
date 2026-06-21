@@ -4,7 +4,7 @@ from ui import api_client
 from ui.styles import page_header
 
 
-page_header("Create your account", "Start chatting with your documents today.", "Account")
+page_header("Create your account", "Bring your ideas to reality", "Account")
 
 left, form_column, right = st.columns([1, 1.5, 1])
 with form_column:

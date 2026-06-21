@@ -5,9 +5,7 @@ market_research_task:
     readiness, and important assumptions. Use current, cited data where
     available.
   expected_output: >
-    A concise ~100-word professional markdown report with executive summary,
-    market sizing, growth trends, and key insights. Include your assessment
-    as a Score field (1-10) at the end, e.g. Score: 8.5.
+    A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown report with executive summary, market sizing, growth trends, and key insights) and 'score' (a float 0-10).
   agent: market_research_specialist
 
 competitive_intelligence_task:
@@ -17,9 +15,7 @@ competitive_intelligence_task:
     customer segments, strengths, weaknesses, and likely responses to a new
     entrant.
   expected_output: >
-    A concise ~100-word professional markdown competitor scan with comparison
-    table and strategic gaps. Include your assessment as a Score field (1-10)
-    at the end, e.g. Score: 7.0.
+    A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown competitor scan with comparison table and strategic gaps) and 'score' (a float 0-10).
   agent: competitive_intelligence_analyst
 
 customer_insights_task:
@@ -28,9 +24,7 @@ customer_insights_task:
     Identify pain points, willingness to pay, adoption barriers, and what
     would drive purchase decisions.
   expected_output: >
-    A concise ~100-word professional markdown customer analysis with segment
-    profiles and key findings. Include your assessment as a Score field (1-10)
-    at the end, e.g. Score: 8.0.
+    A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown customer analysis with segment profiles and key findings) and 'score' (a float 0-10).
   agent: customer_insights_researcher
 
 product_strategy_task:
@@ -39,9 +33,7 @@ product_strategy_task:
     insights into a product strategy for {product_idea}. Define positioning,
     feature priorities, and go-to-market approach.
   expected_output: >
-    A concise ~100-word professional markdown strategy with positioning,
-    MVP features, and roadmap. Include your assessment as a Score field (1-10)
-    at the end, e.g. Score: 7.5.
+    A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown strategy with positioning, MVP features, and roadmap) and 'score' (a float 0-10).
   agent: product_strategy_advisor
 
 business_analyst_task:
@@ -51,7 +43,5 @@ business_analyst_task:
     and the complete context from all prior research to produce a final
     recommendation.
   expected_output: >
-    A concise ~100-word professional markdown business analysis with
-    financial outlook and go/no-go recommendation. Include your assessment
-    as a Score field (1-10) at the end, e.g. Score: 7.0.
+    A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown business analysis with financial outlook and go/no-go recommendation) and 'score' (a float 0-10).
   agent: business_analyst

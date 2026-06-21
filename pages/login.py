@@ -7,7 +7,7 @@ from ui.styles import page_header
 
 
 
-page_header("Welcome back", "Sign in to your DocChat account.", "Account")
+page_header("Welcome back", "Sign in to your account.", "Account")
 
 
 left, form_column, right = st.columns([1, 1.4, 1])

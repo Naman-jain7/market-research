@@ -16,19 +16,16 @@ class LLMSettings(BaseSettings):
     OPENROUTER_MODEL_NAME: Annotated[str, Field(..., validation_alias="OPENROUTER_MODEL_NAME")]
     OPENROUTER_API_KEY: Annotated[Optional[str], Field(..., validation_alias="OPENROUTER_API_KEY")]
     OPENROUTER_PRIORITY: Annotated[int, Field(..., validation_alias="OPENROUTER_PRIORITY")]
-    OPENROUTER_TIER: Annotated[str, Field(default="fast", validation_alias="OPENROUTER_TIER")]
 
     GEMINI_PROVIDER_NAME: Annotated[str, Field(default='gemini', validation_alias="GEMINI_PROVIDER_NAME")]
     GEMINI_MODEL_NAME: Annotated[str, Field(..., validation_alias="GEMINI_MODEL_NAME")]
     GOOGLE_API_KEY: Annotated[Optional[str], Field(..., validation_alias="GOOGLE_API_KEY")]
     GEMINI_PRIORITY: Annotated[int, Field(..., validation_alias="GEMINI_PRIORITY")]
-    GEMINI_TIER: Annotated[str, Field(default="slow", validation_alias="GEMINI_TIER")]
 
     OLLAMA_PROVIDER_NAME: Annotated[str, Field(default='ollama', validation_alias="OLLAMA_PROVIDER_NAME")]
     OLLAMA_MODEL_NAME: Annotated[str, Field(..., validation_alias="OLLAMA_MODEL_NAME")]
     OLLAMA_API_KEY: Annotated[Optional[str], Field(..., validation_alias="OLLAMA_API_KEY")]
     OLLAMA_PRIORITY: Annotated[int, Field(..., validation_alias="OLLAMA_PRIORITY")]
-    OLLAMA_TIER: Annotated[str, Field(default="fast", validation_alias="OLLAMA_TIER")]
 
     TIMEOUT: Annotated[int, Field(default=1, validation_alias="TIMEOUT")]
     MAX_RETRIES: Annotated[int, Field(default=1, validation_alias="MAX_RETRIES")]
@@ -109,6 +106,8 @@ class ServicesSettings(BaseSettings):
     CURRENCY_EXCHANGE_URL: str = Field(..., validation_alias="CURRENCY_EXCHANGE_URL")
     CURRENCY_EXCHANGE_API_KEY: str = Field(..., validation_alias="CURRENCY_EXCHANGE_API_KEY")
 
+    TAVILY_API_KEY: str = Field(..., validation_alias="TAVILY_API_KEY")
+
 
 class AppConfig(BaseSettings):
     APP_NAME: str = Field(..., validation_alias="APP_NAME")
@@ -144,21 +143,18 @@ LLM_PROVIDERS = [
         "model": settings.llm.GEMINI_MODEL_NAME,
         "api_key": settings.llm.GOOGLE_API_KEY,
         "priority": settings.llm.GEMINI_PRIORITY,
-        "tier": settings.llm.GEMINI_TIER,
     },
     {
         "name": settings.llm.OPENROUTER_PROVIDER_NAME,
         "model": settings.llm.OPENROUTER_MODEL_NAME,
         "api_key": settings.llm.OPENROUTER_API_KEY,
         "priority": settings.llm.OPENROUTER_PRIORITY,
-        "tier": settings.llm.OPENROUTER_TIER,
     },
     {
         "name": settings.llm.OLLAMA_PROVIDER_NAME,
         "model": settings.llm.OLLAMA_MODEL_NAME,
         "api_key": settings.llm.OLLAMA_API_KEY,
         "priority": settings.llm.OLLAMA_PRIORITY,
-        "tier": settings.llm.OLLAMA_TIER,
     },
 ]
 

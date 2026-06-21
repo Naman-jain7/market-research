@@ -1,9 +1,15 @@
 import streamlit as st
 import os
+import requests
 from typing import Optional
 from ui.auth import require_authentication
 from ui.styles import apply_styles, page_header
-from src.workflow.crew import MarketResearchCrew, app_state
+from src.workflow.state import AppState
+
+# Initialize an empty default app state just for default values
+app_state = AppState(user_id=0)
+
+API_URL = "http://localhost:8000/api/v1/research"
 
 # Ensure user is logged in
 require_authentication()
@@ -72,45 +78,50 @@ if st.button("Run Market Analysis", type="primary", use_container_width=True):
             inputs = {
                 "user_id": st.session_state.user_id,
                 "user_input": product_idea,
-                "product_idea": product_idea,
             }
             
-            # Initialize crew directly
-            crew_inst = MarketResearchCrew()
-            
             with st.spinner("Agents are collaborating on your request..."):
-                _ = crew_inst.kickoff_with_state(inputs=inputs, stream=False)  # type: ignore
+                response = requests.post(
+                    API_URL,
+                    json=inputs,
+                    timeout=300
+                )
                 
-                # Store output in session state
-                st.session_state.market_research_output = app_state.market_research.text or "No output yet"
-                st.session_state.competitive_intelligence_output = app_state.competitive_intelligence.text or "No output yet"
-                st.session_state.customer_insights_output = app_state.customer_insights.text or "No output yet"
-                st.session_state.product_strategy_output = app_state.product_strategy.text or "No output yet"
-                st.session_state.business_analyst_output = app_state.business_analyst.text or "No output yet"
-                
-                st.session_state.market_research_score = app_state.market_research.score
-                st.session_state.competitive_intelligence_score = app_state.competitive_intelligence.score
-                st.session_state.customer_insights_score = app_state.customer_insights.score
-                st.session_state.product_strategy_score = app_state.product_strategy.score
-                st.session_state.business_analyst_score = app_state.business_analyst.score
-                
-                # Ensure the reports directory exists
-                os.makedirs("reports", exist_ok=True)
-                
-                # Save each agent's output to a separate file
-                outputs_to_save = {
-                    "reports/market_research.md": app_state.market_research.text,
-                    "reports/competitive_intelligence.md": app_state.competitive_intelligence.text,
-                    "reports/customer_insights.md": app_state.customer_insights.text,
-                    "reports/product_strategy.md": app_state.product_strategy.text,
-                    "reports/business_analyst.md": app_state.business_analyst.text,
-                }
-                for path, text in outputs_to_save.items():
-                    if text:
-                        with open(path, "w", encoding="utf-8") as f:
-                            f.write(text)
-            
-            st.rerun()
+                if response.status_code == 200:
+                    state_data = response.json()
+                    
+                    # Store output in session state
+                    st.session_state.market_research_output = state_data["market_research"]["text"] or "No output yet"
+                    st.session_state.competitive_intelligence_output = state_data["competitive_intelligence"]["text"] or "No output yet"
+                    st.session_state.customer_insights_output = state_data["customer_insights"]["text"] or "No output yet"
+                    st.session_state.product_strategy_output = state_data["product_strategy"]["text"] or "No output yet"
+                    st.session_state.business_analyst_output = state_data["business_analyst"]["text"] or "No output yet"
+                    
+                    st.session_state.market_research_score = state_data["market_research"]["score"]
+                    st.session_state.competitive_intelligence_score = state_data["competitive_intelligence"]["score"]
+                    st.session_state.customer_insights_score = state_data["customer_insights"]["score"]
+                    st.session_state.product_strategy_score = state_data["product_strategy"]["score"]
+                    st.session_state.business_analyst_score = state_data["business_analyst"]["score"]
+                    
+                    # Ensure the reports directory exists
+                    os.makedirs("reports", exist_ok=True)
+                    
+                    # Save each agent's output to a separate file
+                    outputs_to_save = {
+                        "reports/market_research.md": state_data["market_research"]["text"],
+                        "reports/competitive_intelligence.md": state_data["competitive_intelligence"]["text"],
+                        "reports/customer_insights.md": state_data["customer_insights"]["text"],
+                        "reports/product_strategy.md": state_data["product_strategy"]["text"],
+                        "reports/business_analyst.md": state_data["business_analyst"]["text"],
+                    }
+                    for path, text in outputs_to_save.items():
+                        if text:
+                            with open(path, "w", encoding="utf-8") as f:
+                                f.write(text)
+                                
+                    st.rerun()
+                else:
+                    st.error(f"API Error ({response.status_code}): {response.text}")
             
         except Exception as e:
             st.error(f"An error occurred during agent execution: {e}")
