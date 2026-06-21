@@ -1,0 +1,57 @@
+market_research_task:
+  description: >
+    Conduct market research for {product_idea}. Include TAM/SAM/SOM, growth
+    drivers, customer adoption signals, regulatory constraints, technology
+    readiness, and important assumptions. Use current, cited data where
+    available.
+  expected_output: >
+    A concise ~100-word professional markdown report with executive summary,
+    market sizing, growth trends, and key insights. Include your assessment
+    as a Score field (1-10) at the end, e.g. Score: 8.5.
+  agent: market_research_specialist
+
+competitive_intelligence_task:
+  description: >
+    Scan the competitive landscape for {product_idea}. Identify direct,
+    indirect, and adjacent competitors; compare positioning, features, pricing,
+    customer segments, strengths, weaknesses, and likely responses to a new
+    entrant.
+  expected_output: >
+    A concise ~100-word professional markdown competitor scan with comparison
+    table and strategic gaps. Include your assessment as a Score field (1-10)
+    at the end, e.g. Score: 7.0.
+  agent: competitive_intelligence_analyst
+
+customer_insights_task:
+  description: >
+    Research target customer segments and user needs for {product_idea}.
+    Identify pain points, willingness to pay, adoption barriers, and what
+    would drive purchase decisions.
+  expected_output: >
+    A concise ~100-word professional markdown customer analysis with segment
+    profiles and key findings. Include your assessment as a Score field (1-10)
+    at the end, e.g. Score: 8.0.
+  agent: customer_insights_researcher
+
+product_strategy_task:
+  description: >
+    Synthesize the market research, competitive intelligence, and customer
+    insights into a product strategy for {product_idea}. Define positioning,
+    feature priorities, and go-to-market approach.
+  expected_output: >
+    A concise ~100-word professional markdown strategy with positioning,
+    MVP features, and roadmap. Include your assessment as a Score field (1-10)
+    at the end, e.g. Score: 7.5.
+  agent: product_strategy_advisor
+
+business_analyst_task:
+  description: >
+    Evaluate the overall business viability of {product_idea}. Consider
+    monetization options, cost structure, revenue projections, risk factors,
+    and the complete context from all prior research to produce a final
+    recommendation.
+  expected_output: >
+    A concise ~100-word professional markdown business analysis with
+    financial outlook and go/no-go recommendation. Include your assessment
+    as a Score field (1-10) at the end, e.g. Score: 7.0.
+  agent: business_analyst

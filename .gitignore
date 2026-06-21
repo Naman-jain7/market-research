@@ -1,0 +1,30 @@
+# vector db
+/data/vector_db/*
+!/data/vector_db/.gitkeep
+
+
+# LLM Weights (if stored locally)
+*.bin
+*.gguf
+
+# Standard Python
+.env
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.egg-info/
+
+.streamlit/
+graphify-out/
+.agents/
+.opencode/
+.vscode/
+
+# Logs - Track the folder, ignore the contents
+/logs/*
+!/logs/.gitkeep
+
+# personal
+personal/
+data/

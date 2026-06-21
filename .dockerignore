@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+
+.dvc/
+!/models/
+!/data/        
+logs/
+
+.env
+.git
+.gitignore
+
+README.md
+Dockerfile
+docker-compose.yml
