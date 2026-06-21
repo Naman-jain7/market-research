@@ -1,6 +1,6 @@
 from crewai.tools import tool
 from langchain_community.tools import DuckDuckGoSearchRun # type:ignore
-from crewai_tools import SerperDevTool, ScrapeWebsiteTool, SeleniumScrapingTool
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool, SeleniumScrapingTool, TavilyResearchTool
 from src.utils.logger import LLM_LOGGER
 from langsmith import traceable
 
@@ -75,6 +75,7 @@ class TracedSeleniumScrapingTool(SeleniumScrapingTool):
 web_search_tool = TracedSerperDevTool(max_usage_count=1)
 web_scraping_tool = TracedScrapeWebsiteTool(max_usage_count=1)
 selenium_scraping_tool = TracedSeleniumScrapingTool(max_usage_count=1)
+tavily_tool = TavilyResearchTool()
 
 _ddg = DuckDuckGoSearchRun()
 
@@ -85,6 +86,7 @@ def duckduckgo_search(query: str) -> str:
 
 
 tools = [
+    tavily_tool,
     duckduckgo_search,
     web_search_tool,
     selenium_scraping_tool,

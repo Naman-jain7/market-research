@@ -3,6 +3,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+from app.api.research import limiter
 from app.api.router import api_router
 from configs.core_config import settings
 from src.utils.logger import APP_LOGGER
@@ -36,6 +39,9 @@ app = FastAPI(
     version=settings.app.APP_VERSION,
     lifespan=lifespan,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.exception_handler(RequestValidationError)
