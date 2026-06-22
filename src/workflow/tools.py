@@ -71,18 +71,30 @@ class TracedSeleniumScrapingTool(SeleniumScrapingTool):
             LLM_LOGGER.error("SeleniumScrapingTool failed: %s", e)
             raise
 
-
-web_search_tool = TracedSerperDevTool(max_usage_count=1)
-web_scraping_tool = TracedScrapeWebsiteTool(max_usage_count=1)
-selenium_scraping_tool = TracedSeleniumScrapingTool(max_usage_count=1)
-tavily_tool = TavilyResearchTool()
-
-_ddg = DuckDuckGoSearchRun()
+class TracedTavilyResearchTool(TavilyResearchTool):
+    @traceable(run_type='tool', name="TavilyResearchTool")
+    def _run(self, *args, **kwargs):
+        LLM_LOGGER.info("Executing TavilyResearchTool: args=%s, kwargs=%s", args, kwargs)
+        try:
+            result = super()._run(*args, **kwargs)
+            LLM_LOGGER.info("TavilyResearchTool completed successfully")
+            return result
+        except Exception as e:
+            LLM_LOGGER.error("TavilyResearchTool failed: %s", e)
+            raise
 
 @tool("DuckDuckGo Search")
 def duckduckgo_search(query: str) -> str:
     """Search the web using DuckDuckGo for current information."""
     return _ddg.run(query)
+
+
+web_search_tool = TracedSerperDevTool(max_usage_count=1)
+web_scraping_tool = TracedScrapeWebsiteTool(max_usage_count=1)
+selenium_scraping_tool = TracedSeleniumScrapingTool(max_usage_count=1)
+tavily_tool = TracedTavilyResearchTool()
+_ddg = DuckDuckGoSearchRun()
+
 
 
 tools = [
