@@ -29,13 +29,14 @@ def init_session_state():
         "market_research_output": app_state.market_research.text or None,
         "competitive_intelligence_output": app_state.competitive_intelligence.text or None,
         "customer_insights_output": app_state.customer_insights.text or None,
-        "product_strategy_output": app_state.product_strategy.text or None,
-        "business_analyst_output": app_state.business_analyst.text or None,
+        "research_manager_review_output": app_state.research_manager_review.text or None,
+        "manager_synthesis_output": app_state.manager_synthesis.text or None,
+        
         "market_research_score": app_state.market_research.score,
         "competitive_intelligence_score": app_state.competitive_intelligence.score,
         "customer_insights_score": app_state.customer_insights.score,
-        "product_strategy_score": app_state.product_strategy.score,
-        "business_analyst_score": app_state.business_analyst.score,
+        "research_manager_review_score": app_state.research_manager_review.score,
+        "manager_synthesis_score": app_state.manager_synthesis.score,
     }
     for key, val in keys.items():
         if key not in st.session_state or st.session_state[key] is None:
@@ -65,14 +66,14 @@ if st.button("Run Market Analysis", type="primary", use_container_width=True):
         st.session_state.market_research_output = "Preparing agent..."
         st.session_state.competitive_intelligence_output = "Preparing agent..."
         st.session_state.customer_insights_output = "Preparing agent..."
-        st.session_state.product_strategy_output = "Preparing agent..."
-        st.session_state.business_analyst_output = "Preparing agent..."
+        st.session_state.research_manager_review_output = "Preparing agent..."
+        st.session_state.manager_synthesis_output = "Preparing agent..."
         
         st.session_state.market_research_score = None
         st.session_state.competitive_intelligence_score = None
         st.session_state.customer_insights_score = None
-        st.session_state.product_strategy_score = None
-        st.session_state.business_analyst_score = None
+        st.session_state.research_manager_review_score = None
+        st.session_state.manager_synthesis_score = None
 
         try:
             inputs = {
@@ -94,14 +95,14 @@ if st.button("Run Market Analysis", type="primary", use_container_width=True):
                     st.session_state.market_research_output = state_data["market_research"]["text"] or "No output yet"
                     st.session_state.competitive_intelligence_output = state_data["competitive_intelligence"]["text"] or "No output yet"
                     st.session_state.customer_insights_output = state_data["customer_insights"]["text"] or "No output yet"
-                    st.session_state.product_strategy_output = state_data["product_strategy"]["text"] or "No output yet"
-                    st.session_state.business_analyst_output = state_data["business_analyst"]["text"] or "No output yet"
+                    st.session_state.research_manager_review_output = state_data["research_manager_review"]["text"] or "No output yet"
+                    st.session_state.manager_synthesis_output = state_data["manager_synthesis"]["text"] or "No output yet"
                     
                     st.session_state.market_research_score = state_data["market_research"]["score"]
                     st.session_state.competitive_intelligence_score = state_data["competitive_intelligence"]["score"]
                     st.session_state.customer_insights_score = state_data["customer_insights"]["score"]
-                    st.session_state.product_strategy_score = state_data["product_strategy"]["score"]
-                    st.session_state.business_analyst_score = state_data["business_analyst"]["score"]
+                    st.session_state.research_manager_review_score = state_data["research_manager_review"]["score"]
+                    st.session_state.manager_synthesis_score = state_data["manager_synthesis"]["score"]
                     
                     # Ensure the reports directory exists
                     os.makedirs("reports", exist_ok=True)
@@ -111,8 +112,8 @@ if st.button("Run Market Analysis", type="primary", use_container_width=True):
                         "reports/market_research.md": state_data["market_research"]["text"],
                         "reports/competitive_intelligence.md": state_data["competitive_intelligence"]["text"],
                         "reports/customer_insights.md": state_data["customer_insights"]["text"],
-                        "reports/product_strategy.md": state_data["product_strategy"]["text"],
-                        "reports/business_analyst.md": state_data["business_analyst"]["text"],
+                        "reports/research_manager_review.md": state_data["research_manager_review"]["text"],
+                        "reports/manager_synthesis.md": state_data["manager_synthesis"]["text"],
                     }
                     for path, text in outputs_to_save.items():
                         if text:
@@ -184,11 +185,11 @@ with col1:
         "customer_insights.md"
     )
     render_agent_card(
-        "📈 5. Business Analysis",
-        st.session_state.business_analyst_output,
+        "📈 5. Manager Synthesis",
+        st.session_state.manager_synthesis_output,
         "Waiting for agent to start...",
-        "ba",
-        "business_analyst.md"
+        "ms",
+        "manager_synthesis.md"
     )
 
 with col2:
@@ -200,11 +201,11 @@ with col2:
         "competitive_intelligence.md"
     )
     render_agent_card(
-        "🎯 4. Product Strategy",
-        st.session_state.product_strategy_output,
+        "🎯 4. Research Manager Review",
+        st.session_state.research_manager_review_output,
         "Waiting for agent to start...",
-        "ps",
-        "product_strategy.md"
+        "rmr",
+        "research_manager_review.md"
     )
 
 # Show scores from each agent
@@ -215,8 +216,8 @@ agent_labels = [
     ("Market Research", st.session_state.market_research_score),
     ("Competitive Intel", st.session_state.competitive_intelligence_score),
     ("Customer Insights", st.session_state.customer_insights_score),
-    ("Product Strategy", st.session_state.product_strategy_score),
-    ("Business Analyst", st.session_state.business_analyst_score),
+    ("Manager Review", st.session_state.research_manager_review_score),
+    ("Manager Synthesis", st.session_state.manager_synthesis_score),
 ]
 for col, (label, score) in zip(score_cols, agent_labels):
     with col:
@@ -244,3 +245,4 @@ if os.path.exists(report_path):
             
     except Exception as e:
         st.warning(f"Could not load the generated report file: {e}")
+

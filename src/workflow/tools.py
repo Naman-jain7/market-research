@@ -1,25 +1,8 @@
 from crewai.tools import tool
 from langchain_community.tools import DuckDuckGoSearchRun # type:ignore
-from crewai_tools import SerperDevTool, ScrapeWebsiteTool, SeleniumScrapingTool, TavilyResearchTool
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool, SeleniumScrapingTool, TavilySearchTool, TavilyResearchTool
 from src.utils.logger import LLM_LOGGER
 from langsmith import traceable
-
-# @tool("Calculator")
-# def calculator(num1: float, num2: float, opr: str) -> str:
-#     """performs basic arithmetic operations on 2 numbers. supported operations: add, sub, mul, div"""
-#     if opr == "add":
-#         result = num1 + num2
-#     elif opr == "sub":
-#         result = num1 - num2
-#     elif opr == "mul":
-#         result = num1 * num2
-#     elif opr == "div":
-#         if num2 == 0:
-#             return "Error: Division by zero is not allowed"
-#         result = num1 / num2
-#     else:
-#         return f"Error: Unsupported operation '{opr}'"
-#     return f"{num1} {opr} {num2} = {result}"
 
 # @tool("Get Stock Price")
 # def get_stock_price(symbol: str) -> str:
@@ -71,6 +54,18 @@ class TracedSeleniumScrapingTool(SeleniumScrapingTool):
             LLM_LOGGER.error("SeleniumScrapingTool failed: %s", e)
             raise
 
+class TracedTavilySearchTool(TavilySearchTool):
+    @traceable(run_type='tool', name="TavilySearchTool")
+    def _run(self, *args, **kwargs):
+        LLM_LOGGER.info("Executing TavilySearchTool: args=%s, kwargs=%s", args, kwargs)
+        try:
+            result = super()._run(*args, **kwargs)
+            LLM_LOGGER.info("TavilySearchTool completed successfully")
+            return result
+        except Exception as e:
+            LLM_LOGGER.error("TavilySearchTool failed: %s", e)
+            raise
+
 class TracedTavilyResearchTool(TavilyResearchTool):
     @traceable(run_type='tool', name="TavilyResearchTool")
     def _run(self, *args, **kwargs):
@@ -83,23 +78,32 @@ class TracedTavilyResearchTool(TavilyResearchTool):
             LLM_LOGGER.error("TavilyResearchTool failed: %s", e)
             raise
 
+_ddg = DuckDuckGoSearchRun()
+
 @tool("DuckDuckGo Search")
 def duckduckgo_search(query: str) -> str:
     """Search the web using DuckDuckGo for current information."""
     return _ddg.run(query)
 
 
-web_search_tool = TracedSerperDevTool(max_usage_count=1)
+serper_web_search_tool = TracedSerperDevTool(max_usage_count=1)
+
 web_scraping_tool = TracedScrapeWebsiteTool(max_usage_count=1)
 selenium_scraping_tool = TracedSeleniumScrapingTool(max_usage_count=1)
-tavily_tool = TracedTavilyResearchTool()
-_ddg = DuckDuckGoSearchRun()
+
+tavily_search_tool = TracedTavilySearchTool()
+tavily_research_tool = TracedTavilyResearchTool()
 
 
 
 tools = [
-    tavily_tool,
-    duckduckgo_search,
-    web_search_tool,
-    selenium_scraping_tool,
+    # serper_web_search_tool,
+
+    # web_scraping_tool,
+    # selenium_scraping_tool,
+
+    tavily_search_tool,
+    tavily_research_tool,
+
+    # duckduckgo_search,
 ]
