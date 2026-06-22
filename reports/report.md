@@ -1,7 +1,1 @@
-**Business Viability Assessment**
-
-The AI‑driven YouTube‑to‑LinkedIn/X/WhatsApp summariser taps a $4.6 bn SAM with an attainable $18 m 5‑yr SOM. Tiered pricing ($15‑$30 /mo for solo creators, $30‑$45 /mo for SMBs, $75‑$120 /mo for enterprises) yields an **ARR of $18 m** at 1,000 creators in Year 5, with gross margins ≈ 85 % (LLM cost <$0.01 per summary). Core costs are cloud compute ($0.3 m/yr), API fees ($0.5 m/yr), and a lean dev/ops team ($1.2 m/yr). Breakeven is reached in month 22; cash‑burn ≈ $2 m in the first year. Risks‑high API pricing changes, GDPR compliance overhead, and entrenched SMM suites; mitigated by first‑class WhatsApp integration and rights‑management differentiators.
-
-**Recommendation:** **Go** – launch MVP within 3 months, focus on solo creators, then expand to SMB/Enterprise tiers.  
-
-**Score:** 7.8
+{"text":"**Business Viability Assessment** – The niche AI‑summarizer + auto‑poster targets ~500 k English business‑focused YouTubers (10k‑100k subs) and SMB marketing teams, representing a $162 M SAM. A $15‑$30 /mo SaaS pricing yields $0.8 M SOM in year 1 (0.5% adoption) with ~30% CAGR driven by micro‑learning demand and automation adoption. Key cost drivers are LLM API usage (<$2 /mo per user) and platform API fees; development and compliance overhead are modest. Risks include API policy changes (X), GDPR/CCPA consent complexity, and competitive pressure from Zapier‑based DIY stacks. Financial projections show breakeven by Q3 2025 with a 3‑year IRR ≈ 45%. **Recommendation**: Proceed to MVP (Q1 core features) with a 14‑day free trial and creator‑referral program; monitor policy risk closely.","score":9.1}
