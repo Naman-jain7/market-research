@@ -12,7 +12,9 @@ class APIError(RuntimeError):
 def _detail(response: requests.Response) -> str:
     try:
         body = response.json()
-        return str(body.get("detail") or body.get("message") or response.text)
+        error = body.get("error") if isinstance(body, dict) else None
+        error_message = error.get("message") if isinstance(error, dict) else None
+        return str(body.get("detail") or body.get("message") or error_message or response.text)
 
     except ValueError:
         return response.text or f"Request failed with status {response.status_code}"
