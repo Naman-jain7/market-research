@@ -1,5 +1,5 @@
-from typing import Optional
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+
 
 class User(BaseModel):
     """
@@ -8,14 +8,14 @@ class User(BaseModel):
     """
     user_id: int = Field(..., description="The unique identifier for the user (Primary Key)")
     full_name: str = Field(...,min_length=1,max_length=100,description="User's full name, cannot be empty",)
-    age: Optional[int] = Field(None, ge=0, le=150, description="User's age, must be a positive integer")
+    age: int | None = Field(None, ge=0, le=150, description="User's age, must be a positive integer")
     email: EmailStr = Field(..., max_length=255, description="Unique and validated email address")
     password: str = Field(..., min_length=8, max_length=255, description="Hashed user password string")
 
 
 class UserSignup(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=100)
-    age: Optional[int] = Field(None, ge=0, le=150)
+    age: int | None = Field(None, ge=0, le=150)
     email: EmailStr = Field(..., max_length=255)
     password: str = Field(..., min_length=8, max_length=255)
 

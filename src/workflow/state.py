@@ -1,5 +1,7 @@
 from typing import Annotated
+
 from pydantic import BaseModel, Field, field_validator
+
 
 class Citation(BaseModel):
     title: str=""
@@ -18,7 +20,9 @@ class AgentOutput(BaseModel):
             return []
         cleaned = []
         for item in v:
-            if isinstance(item, dict):
+            if isinstance(item, Citation):
+                cleaned.append(item)
+            elif isinstance(item, dict):
                 cleaned.append(item)
             elif isinstance(item, str) and item.strip():
                 # If the LLM returns a raw string (e.g., a URL) instead of a dict

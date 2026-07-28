@@ -1,8 +1,15 @@
 from crewai.tools import tool
-from langchain_community.tools import DuckDuckGoSearchRun # type:ignore
-from crewai_tools import SerperDevTool, ScrapeWebsiteTool, SeleniumScrapingTool, TavilySearchTool, TavilyResearchTool
-from src.utils.logger import LLM_LOGGER
+from crewai_tools import (
+    ScrapeWebsiteTool,
+    SeleniumScrapingTool,
+    SerperDevTool,
+    TavilyResearchTool,
+    TavilySearchTool,
+)
+from langchain_community.tools import DuckDuckGoSearchRun  # type:ignore
 from langsmith import traceable
+
+from src.utils.logger import LLM_LOGGER
 
 # @tool("Get Stock Price")
 # def get_stock_price(symbol: str) -> str:

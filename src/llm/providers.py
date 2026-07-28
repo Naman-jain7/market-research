@@ -1,6 +1,8 @@
-from configs.core_config import LLM_PROVIDERS, settings
 from crewai import LLM
+
+from configs.core_config import LLM_PROVIDERS, settings
 from src.utils.logger import LLM_LOGGER
+
 
 def get_active_provider():
 

@@ -1,6 +1,17 @@
 import json
 import re
+from urllib.parse import urlparse
+
 from src.workflow.state import AgentOutput, Citation
+
+
+PROMPT_INJECTION_PATTERNS = (
+    r"\b(?:ignore|disregard|forget)\s+(?:all\s+)?(?:previous|prior|system|developer)\s+instructions?\b",
+    r"\breveal\s+(?:the\s+)?system\s+prompt\b",
+    r"\breturn\s+hidden\s+credentials?\b",
+    r"\bexfiltrate\s+secrets?\b",
+)
+
 
 def sanitize_input(text: str) -> str:
     """
@@ -18,23 +29,33 @@ def sanitize_input(text: str) -> str:
     
     # Redact potential API keys (heuristic: 32+ alphanumeric characters)
     text = re.sub(r'\b[A-Za-z0-9_-]{32,}\b', '[REDACTED_API_KEY]', text)
+
+    # Neutralize common prompt-injection directives without rejecting benign input.
+    for pattern in PROMPT_INJECTION_PATTERNS:
+        text = re.sub(pattern, "[REDACTED_PROMPT_INJECTION]", text, flags=re.IGNORECASE)
     
     return text
+
+
+def _is_valid_http_url(url: str) -> bool:
+    parsed = urlparse(url.strip())
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
 
 def _validate_sources(sources: list) -> list[Citation]:
     """Validate and clean a list of source citations."""
     validated: list[Citation] = []
     for s in sources:
         if isinstance(s, Citation):
-            validated.append(s)
+            if _is_valid_http_url(s.url):
+                validated.append(s)
         elif isinstance(s, dict):
             url = s.get("url", "")
             title = s.get("title", "")
-            if url and isinstance(url, str) and url.startswith("http"):
+            if isinstance(url, str) and _is_valid_http_url(url):
                 validated.append(Citation(title=title, url=url))
-        elif isinstance(s, str):
-            if s.startswith("http"):
-                validated.append(Citation(url=s))
+        elif isinstance(s, str) and _is_valid_http_url(s):
+            validated.append(Citation(url=s))
     return validated
 
 def _extract_sources_from_text(text: str) -> list[Citation]:
@@ -42,30 +63,32 @@ def _extract_sources_from_text(text: str) -> list[Citation]:
     sources: list[Citation] = []
 
     # Try to find a JSON array of sources embedded in the text
-    array_match = re.search(r'\[\s*\{[^}]+\}\s*\]', text, re.DOTALL)
-    if array_match:
+    decoder = json.JSONDecoder()
+    for start in (match.start() for match in re.finditer(r"\[", text)):
         try:
-            parsed = json.loads(array_match.group(0))
-            if isinstance(parsed, list):
-                return _validate_sources(parsed)
+            parsed, _ = decoder.raw_decode(text[start:])
         except (json.JSONDecodeError, TypeError):
-            pass
+            continue
+        if isinstance(parsed, list):
+            validated = _validate_sources(parsed)
+            if validated:
+                return validated
 
     # Fallback: extract markdown links [title](url)
     md_links = re.findall(r'\[([^\]]+)\]\((https?://[^\s\)]+)\)', text)
     for title, url in md_links:
-        sources.append(Citation(title=title, url=url))
+        if _is_valid_http_url(url):
+            sources.append(Citation(title=title, url=url))
 
     # Fallback: extract bare URLs
     urls = re.findall(r'https?://[^\s\)\]>\"\']+', text)
     existing_urls = {s.url for s in sources}
     for url in urls:
-        if url not in existing_urls:
+        if url not in existing_urls and _is_valid_http_url(url):
             sources.append(Citation(url=url))
             existing_urls.add(url)
 
     return sources
-
 
 def validate_agent_output(output) -> AgentOutput:
     """

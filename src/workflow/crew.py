@@ -1,16 +1,14 @@
-from typing import List
-
 from crewai import Agent, Crew, Process, Task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.project import CrewBase, agent, crew, task
 from dotenv import load_dotenv
 
 from configs.core_config import AGENTS_CONFIG_PATH, TASKS_CONFIG_PATH
-from src.workflow.state import AgentOutput, AppState
-from src.workflow.guardrails import sanitize_input, validate_agent_output
-from src.workflow.tools import tools
-from src.utils.logger import APP_LOGGER, LLM_LOGGER
 from src.llm.providers import create_llm, create_ollama_llm
+from src.utils.logger import APP_LOGGER, LLM_LOGGER
+from src.workflow.guardrails import sanitize_input, validate_agent_output
+from src.workflow.state import AgentOutput, AppState
+from src.workflow.tools import tools
 
 load_dotenv()
 
@@ -19,9 +17,9 @@ default_llm = create_llm()
 critic_llm = create_ollama_llm() or create_llm()
 
 @CrewBase
-class MarketResearchCrew():
-    agents: List[BaseAgent]
-    tasks: List[Task]
+class MarketResearchCrew:
+    agents: list[BaseAgent]
+    tasks: list[Task]
 
     def __init__(self) -> None:
         self.app_state = AppState()
@@ -64,13 +62,13 @@ class MarketResearchCrew():
     @agent
     def research_manager(self) -> Agent:
         return Agent(
-            llm=critic_llm, config=self.agents_config["research_manager"], tools=tools     # type:ignore
+            llm=critic_llm, config=self.agents_config["research_manager"]     # type:ignore
         )
 
     @agent
     def strategy_manager(self)->Agent:
         return Agent(
-            llm=default_llm, config=self.agents_config["strategy_manager"], tools=tools  #type: ignore
+            llm=default_llm, config=self.agents_config["strategy_manager"]  #type: ignore
         )
 
     # ================ Tasks ======================
@@ -89,7 +87,7 @@ class MarketResearchCrew():
             "Crew kickoff — user_id: %s, product: %.60s",
             self.app_state.user_id, self.app_state.product_idea
         )
-        LLM_LOGGER.info("Sequential crew execution started — 5 tasks: market_research, competitive_intelligence, customer_insights, product_strategy, business_analyst")
+        LLM_LOGGER.info("Sequential crew execution started — 5 tasks: market_research, competitive_intelligence, customer_insights, research_manager_review, manager_synthesis")
         c = self.crew()
         c.stream = stream
         result = c.kickoff(inputs=inputs)
@@ -184,6 +182,7 @@ class MarketResearchCrew():
                 self.market_research_task(),  # type: ignore
                 self.competitive_intelligence_task(),  # type: ignore
                 self.customer_insights_task(),  # type: ignore
+                self.research_manager_review_task(),  # type: ignore
             ],
             callback=self._make_callback("manager_synthesis"),
             output_pydantic=AgentOutput,
