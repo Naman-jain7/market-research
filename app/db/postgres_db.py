@@ -1,7 +1,10 @@
-from src.utils.logger import APP_LOGGER
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Any, List, Dict, Optional
-import asyncpg # type: ignore
+from typing import Any
+
+import asyncpg  # type: ignore
+
+from src.utils.logger import APP_LOGGER
 
 
 class DatabaseManager:
@@ -14,7 +17,7 @@ class DatabaseManager:
         self.dsn = dsn  # Data Source Name
         self.min_size = min_size  # minimum number of db connections the pool keeps open and ready at all times, even when idle
         self.max_size = max_size
-        self._pool: Optional[asyncpg.Pool] = None   # cached collection of pre-warmed database connections
+        self._pool: asyncpg.Pool | None = None   # cached collection of pre-warmed database connections
 
     async def connect(self) -> None:
         """Initializes the connection pool."""
@@ -63,7 +66,7 @@ class DatabaseManager:
             if connection and self._pool:
                 await self._pool.release(connection)
 
-    async def fetch_rows(self, query: str, *args: Any) -> List[Dict[str, Any]]:
+    async def fetch_rows(self, query: str, *args: Any) -> list[dict[str, Any]]:
         """Executes a SELECT query and returns results as standard dicts."""
 
         async with self.get_connection() as conn:
@@ -75,18 +78,18 @@ class DatabaseManager:
         async with self.get_connection() as conn:
             return await conn.execute(query, *args)
     
-    async def execute_many(self, query: str, args_list: List[tuple]) -> None:
+    async def execute_many(self, query: str, args_list: list[tuple]) -> None:
         """Executes a batch INSERT, UPDATE, or DELETE query."""
         async with self.get_connection() as conn:
             await conn.executemany(query, args_list)
 
-    async def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+    async def get_user_by_email(self, email: str) -> dict[str, Any] | None:
         """Fetches a single user record by their unique email."""
         query = "SELECT id, full_name, age, email, hashed_password FROM users WHERE email = $1"
         rows = await self.fetch_rows(query, email)
         return rows[0] if rows else None
     
-    async def create_user(self, full_name: str, age: Optional[int], email: str, hashed_password: str) -> int:
+    async def create_user(self, full_name: str, age: int | None, email: str, hashed_password: str) -> int:
         """Inserts a new user and returns their ID."""
         query = """
             INSERT INTO users (full_name, age, email, hashed_password)

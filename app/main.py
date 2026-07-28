@@ -1,15 +1,18 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from contextlib import asynccontextmanager
-
-from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
 from app.api.research import limiter
 from app.api.router import api_router
-from configs.core_config import settings
-from src.utils.logger import APP_LOGGER
 from app.db.manager import db_manager
+from configs.core_config import settings
+from src.utils.exception import AppException
+from src.utils.logger import APP_LOGGER
+
 
 @asynccontextmanager  # type: ignore
 async def lifespan(app: FastAPI):
@@ -28,7 +31,7 @@ async def lifespan(app: FastAPI):
         """)
         
         APP_LOGGER.info("Base database tables verified.")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         APP_LOGGER.error(f"Failed to create base tables: {e}")
     yield
     await db_manager.disconnect()
@@ -41,7 +44,18 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler) # type: ignore
+
+
+@app.exception_handler(AppException)
+async def app_exception_handler(request: Request, exc: AppException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "detail": exc.message,
+            **exc.to_dict(),
+        },
+    )
 
 
 @app.exception_handler(RequestValidationError)

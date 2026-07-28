@@ -1,8 +1,9 @@
-from dotenv import load_dotenv
 from pathlib import Path
+from typing import Annotated, Any
+
+from dotenv import load_dotenv
 from pydantic import Field, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict # type: ignore
-from typing import Optional, Any, Annotated
+from pydantic_settings import BaseSettings, SettingsConfigDict  # type: ignore
 
 load_dotenv()
 
@@ -14,17 +15,17 @@ class LLMSettings(BaseSettings):
 
     OPENROUTER_PROVIDER_NAME: Annotated[str, Field(default='openrouter', validation_alias="OPENROUTER_PROVIDER_NAME")]
     OPENROUTER_MODEL_NAME: Annotated[str, Field(..., validation_alias="OPENROUTER_MODEL_NAME")]
-    OPENROUTER_API_KEY: Annotated[Optional[str], Field(..., validation_alias="OPENROUTER_API_KEY")]
+    OPENROUTER_API_KEY: Annotated[str | None, Field(..., validation_alias="OPENROUTER_API_KEY")]
     OPENROUTER_PRIORITY: Annotated[int, Field(..., validation_alias="OPENROUTER_PRIORITY")]
 
     GEMINI_PROVIDER_NAME: Annotated[str, Field(default='gemini', validation_alias="GEMINI_PROVIDER_NAME")]
     GEMINI_MODEL_NAME: Annotated[str, Field(..., validation_alias="GEMINI_MODEL_NAME")]
-    GOOGLE_API_KEY: Annotated[Optional[str], Field(..., validation_alias="GOOGLE_API_KEY")]
+    GOOGLE_API_KEY: Annotated[str | None, Field(..., validation_alias="GOOGLE_API_KEY")]
     GEMINI_PRIORITY: Annotated[int, Field(..., validation_alias="GEMINI_PRIORITY")]
 
     OLLAMA_PROVIDER_NAME: Annotated[str, Field(default='ollama', validation_alias="OLLAMA_PROVIDER_NAME")]
     OLLAMA_MODEL_NAME: Annotated[str, Field(..., validation_alias="OLLAMA_MODEL_NAME")]
-    OLLAMA_API_KEY: Annotated[Optional[str], Field(..., validation_alias="OLLAMA_API_KEY")]
+    OLLAMA_API_KEY: Annotated[str | None, Field(..., validation_alias="OLLAMA_API_KEY")]
     OLLAMA_PRIORITY: Annotated[int, Field(..., validation_alias="OLLAMA_PRIORITY")]
 
     TIMEOUT: Annotated[int, Field(default=1, validation_alias="TIMEOUT")]
@@ -32,7 +33,7 @@ class LLMSettings(BaseSettings):
     CIRCUIT_BREAKER_THRESHOLD: Annotated[int, Field(default=3, validation_alias="CIRCUIT_BREAKER_THRESHOLD")]
     CIRCUIT_BREAKER_COOLDOWN: Annotated[int, Field(default=30, validation_alias="CIRCUIT_BREAKER_COOLDOWN")]
     MAX_TOKENS: Annotated[int, Field(default=1024, validation_alias="MAX_TOKENS")]
-    TEMPERATURE: Annotated[float, Field(default=0.3, validation_alias="TEMPERATURE")]
+    TEMPERATURE: Annotated[float, Field(default=0.6, validation_alias="TEMPERATURE")]
 
     @model_validator(mode="after")
     def validate_providers(self)->"LLMSettings":
@@ -87,7 +88,7 @@ class EmbeddingSettings(BaseSettings):
 
 
 class DatabaseConfig(BaseSettings):
-    DB_DSN: Optional[str] = Field("", validation_alias="DB_DSN")
+    DB_DSN: str | None = Field("", validation_alias="DB_DSN")
 
     @model_validator(mode="before")
     @classmethod

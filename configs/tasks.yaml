@@ -1,167 +1,157 @@
 market_research_task:
   description: >
-    Conduct market research for {product_idea}. Include TAM/SAM/SOM, growth
-    drivers, customer adoption signals, regulatory constraints, technology
-    readiness, and important assumptions. Use current, cited data where
-    available.
+    Conduct market research for {product_idea}.
+
+    Cover:
+    - TAM/SAM/SOM or a clearly reasoned proxy when exact sizing is unavailable
+    - market growth drivers and headwinds
+    - customer adoption signals and demand indicators
+    - regulatory, platform, compliance, or operational constraints
+    - technology readiness and implementation feasibility
+    - explicit assumptions, uncertainties, and confidence level
+
+    Evidence rules:
+    - Prefer recent primary or reputable secondary sources.
+    - Cite sources for market size, growth rates, regulatory claims, pricing
+      assumptions, and adoption signals.
+    - If a number is estimated, label it as an estimate and explain the logic.
+    - Do not invent citations or imply certainty when evidence is weak.
+    - If you use a tool, wait for the tool result and then produce the final
+      JSON answer. Never return a tool call as the final answer.
   expected_output: >
-    A JSON object matching the AgentOutput schema
+    Return valid JSON only, with no markdown fences or extra commentary. The JSON
+    must match AgentOutput exactly:
+    {
+      "text": "Concise markdown report with findings, assumptions, caveats, and recommendation-relevant implications.",
+      "score": 0.0,
+      "sources": [{"title": "Source title", "url": "https://example.com"}]
+    }
+    The score must be a number from 0 to 10 representing confidence in the
+    market opportunity based on evidence quality and market attractiveness.
   agent: market_research_specialist
-
-# market_research_critique_task:
-#   description: >
-#     Review the market research report.
-#     Identify unsupported claims,
-#     weak citations,
-#     unrealistic assumptions,
-#     missing risks,
-#     and overestimated market size.
-
-#     Assign a confidence score.
-
-#   expected_output: >
-#     A JSON object matching AgentOutput schema,
-#     containing:
-#     - text: concise audit report
-#     - score
-#     - sources: citations used in validation
-
-#   agent: research_quality_critic
 
 
 competitive_intelligence_task:
   description: >
-    Scan the competitive landscape for {product_idea}. Identify direct,
-    indirect, and adjacent competitors; compare positioning, features, pricing,
-    customer segments, strengths, weaknesses, and likely responses to a new
-    entrant. Cite sources for each competitor mentioned.
+    Scan the competitive landscape for {product_idea}.
+
+    Cover:
+    - direct competitors solving the same job
+    - indirect competitors and substitute workflows
+    - adjacent platforms that could expand into the category
+    - positioning, feature set, target customer, pricing, distribution, and
+      strengths or weaknesses for each important competitor
+    - likely incumbent responses and defensibility risks
+    - credible differentiation opportunities for a new entrant
+
+    Evidence rules:
+    - Cite a source for each named competitor whenever possible.
+    - Separate observed facts from strategic interpretation.
+    - Do not claim a competitor lacks a feature unless the available evidence
+      supports that claim.
+    - If you use a tool, wait for the tool result and then produce the final
+      JSON answer. Never return a tool call as the final answer.
   expected_output: >
-    A JSON object matching the AgentOutput schema
+    Return valid JSON only, with no markdown fences or extra commentary. The JSON
+    must match AgentOutput exactly:
+    {
+      "text": "Concise markdown competitive analysis with competitor table, differentiation opportunities, risks, and evidence caveats.",
+      "score": 0.0,
+      "sources": [{"title": "Source title", "url": "https://example.com"}]
+    }
+    The score must be a number from 0 to 10 representing confidence that the
+    product can achieve differentiated positioning against the current market.
   agent: competitive_intelligence_analyst
-
-# competitive_intelligence_critique_task:
-#   description: >
-#     Review the competitive analysis.
-#     Identify missing competitors, incorrect positioning,
-#     weak differentiation claims, unsupported pricing data,
-#     and overlooked competitive threats.
-
-#   expected_output: >
-#     A JSON object matching AgentOutput schema,
-#     containing:
-#     - text: concise audit report
-#     - score
-#     - sources: citations used in validation
-
-#   agent: competitive_strategy_critic
 
 
 customer_insights_task:
   description: >
     Research target customer segments and user needs for {product_idea}.
-    Identify pain points, willingness to pay, adoption barriers, and what
-    would drive purchase decisions. Back all claims with cited sources.
+
+    Cover:
+    - primary and secondary customer segments
+    - jobs-to-be-done, pain points, and current alternatives
+    - adoption barriers, trust concerns, and switching costs
+    - willingness-to-pay signals or pricing sensitivity
+    - buying triggers, decision makers, and likely channels
+    - evidence gaps and assumptions that require validation
+
+    Evidence rules:
+    - Back behavioral and willingness-to-pay claims with cited sources where
+      possible.
+    - Distinguish stated interest, usage behavior, and paid demand.
+    - Flag weak or anecdotal evidence instead of treating it as conclusive.
+    - If you use a tool, wait for the tool result and then produce the final
+      JSON answer. Never return a tool call as the final answer.
   expected_output: >
-    A JSON object matching the AgentOutput schema
+    Return valid JSON only, with no markdown fences or extra commentary. The JSON
+    must match AgentOutput exactly:
+    {
+      "text": "Concise markdown customer insights report with segments, pain points, buying triggers, willingness-to-pay signals, adoption barriers, and validation gaps.",
+      "score": 0.0,
+      "sources": [{"title": "Source title", "url": "https://example.com"}]
+    }
+    The score must be a number from 0 to 10 representing confidence in customer
+    demand and willingness to adopt or pay.
   agent: customer_insights_researcher
-
-# customer_insights_critique_task:
-#   description: >
-#     Review the customer insights report.
-#     Challenge customer segmentation,
-#     willingness-to-pay assumptions,
-#     adoption barriers, and demand signals.
-#     Identify unsupported behavioral claims.
-
-#   expected_output: >
-#     A JSON object matching AgentOutput schema,
-#     containing:
-#     - text: concise audit report
-#     - score
-#     - sources: citations used in validation
-
-#   agent: customer_validation_critic
-
-
-# product_strategy_task:
-#   description: >
-#     Synthesize the market research, competitive intelligence, and customer
-#     insights into a product strategy for {product_idea}. Define positioning,
-#     feature priorities, and go-to-market approach. Reference sources from prior research.
-#   expected_output: >
-#     A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown strategy with positioning, MVP features, and roadmap), 'score' (a float 0-10), and 'sources' (a list of Citation objects with 'title' and 'url' supporting the strategy).
-#   agent: product_strategy_advisor
-
-# product_strategy_critique_task:
-#   description: >
-#     Review the product strategy.
-#     Identify positioning weaknesses,
-#     roadmap bloat, unclear differentiation,
-#     GTM risks, and feature prioritization issues.
-
-#   expected_output: >
-#     A JSON object matching AgentOutput schema,
-#     containing:
-#     - text: concise audit report
-#     - score
-#     - sources: citations used in validation
-
-#   agent: product_strategy_critic
-
-
-# business_analyst_task:
-#   description: >
-#     Evaluate the overall business viability of {product_idea}. Consider
-#     monetization options, cost structure, revenue projections, risk factors,
-#     and the complete context from all prior research to produce a final
-#     recommendation. Include cited sources for all financial assumptions and market data.
-#   expected_output: >
-#     A JSON object matching the AgentOutput schema, containing 'text' (a concise ~100-word professional markdown business analysis with financial outlook and go/no-go recommendation), 'score' (a float 0-10), and 'sources' (a list of Citation objects with 'title' and 'url' supporting the analysis).
-#   agent: business_analyst
 
 
 research_manager_review_task:
   description: >
-    Review the completed market research, competitive intelligence,
-    and customer insights reports for {product_idea}.
+    Review the completed market research, competitive intelligence, and customer
+    insights reports for {product_idea}.
 
     Evaluate:
-    - consistency across reports
+    - consistency across the three reports
     - validity of market sizing assumptions
-    - strength of competitive analysis
-    - credibility of customer insights
-    - source quality and evidence strength
+    - strength and recency of cited evidence
+    - credibility of competitive claims
+    - credibility of customer demand and willingness-to-pay claims
     - missing risks, blind spots, and uncertainties
+    - conclusions that are unsupported, overstated, or contradicted
 
-    Identify findings that are well-supported and findings that
-    should be treated with caution.
-
-    Produce a consolidated review that downstream strategy planning
-    should use as the authoritative assessment of research quality.
-
+    Produce an audit that downstream strategy planning should treat as the
+    authoritative research-quality assessment. Do not introduce major new
+    research unless needed to verify or challenge a claim.
   expected_output: >
-    A JSON object matching the AgentOutput schema
-  
+    Return valid JSON only, with no markdown fences or extra commentary. The JSON
+    must match AgentOutput exactly:
+    {
+      "text": "Concise markdown validation review listing reliable findings, caution areas, contradictions, missing evidence, and decision implications.",
+      "score": 0.0,
+      "sources": [{"title": "Source title", "url": "https://example.com"}]
+    }
+    The score must be a number from 0 to 10 representing overall confidence in
+    the research package after validation.
   agent: research_manager
 
 
 manager_synthesis_task:
   description: >
-    Review all validated research.
-
-    Resolve conflicting findings.
+    Synthesize the validated research for {product_idea}. Use the research
+    manager review as the quality filter for the market, competitive, and
+    customer findings.
 
     Produce:
     - market opportunity assessment
-    - product positioning
-    - MVP definition
-    - pricing strategy
+    - target customer and positioning recommendation
+    - MVP scope and feature priorities
+    - pricing strategy or pricing test recommendation
     - go-to-market plan
-    - business viability recommendation
+    - key risks, assumptions, and validation next steps
+    - business viability recommendation: proceed, proceed with caution, or do
+      not proceed
 
-    Explain tradeoffs and assumptions.
-
+    Resolve conflicting findings explicitly. Favor validated evidence over raw
+    claims, and avoid turning weak evidence into confident strategy.
   expected_output: >
-    A JSON object matching the AgentOutput schema.
-
+    Return valid JSON only, with no markdown fences or extra commentary. The JSON
+    must match AgentOutput exactly:
+    {
+      "text": "Concise markdown strategy synthesis with recommendation, MVP, positioning, pricing, GTM, risks, assumptions, and next validation steps.",
+      "score": 0.0,
+      "sources": [{"title": "Source title", "url": "https://example.com"}]
+    }
+    The score must be a number from 0 to 10 representing business viability
+    after considering validated market, competitive, and customer evidence.
   agent: strategy_manager
