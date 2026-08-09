@@ -12,17 +12,18 @@ class _FakeDbManager:
     async def get_user_by_email(self, email):
         return None
 
-
+# starts with test_ so pytest recognizes it
 def test_login_invalid_credentials_returns_user_facing_error(monkeypatch):
     auth_module = importlib.import_module("app.api.auth")
     monkeypatch.setattr(auth_module, "db_manager", _FakeDbManager())
 
     app = FastAPI()
-    app.add_exception_handler(AppException, app_exception_handler)
+    app.add_exception_handler(AppException, app_exception_handler) # type: ignore
     app.include_router(auth_module.router)
 
     async def call_endpoint():
         transport = httpx.ASGITransport(app=app)
+        
         async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
             return await client.post(
                 "/login",

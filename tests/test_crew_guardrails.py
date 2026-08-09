@@ -35,37 +35,37 @@ def _identity_decorator(func=None, *args, **kwargs):
 
 def import_crew_with_fakes(monkeypatch):
     crewai = ModuleType("crewai")
-    crewai.Agent = lambda *args, **kwargs: SimpleNamespace(args=args, kwargs=kwargs)
-    crewai.Crew = _FakeCrew
-    crewai.Process = SimpleNamespace(sequential="sequential")
-    crewai.Task = lambda *args, **kwargs: SimpleNamespace(args=args, kwargs=kwargs)
+    crewai.Agent = lambda *args, **kwargs: SimpleNamespace(args=args, kwargs=kwargs) # type: ignore
+    crewai.Crew = _FakeCrew # type: ignore
+    crewai.Process = SimpleNamespace(sequential="sequential") # type: ignore
+    crewai.Task = lambda *args, **kwargs: SimpleNamespace(args=args, kwargs=kwargs) # type: ignore
 
     base_agent = ModuleType("crewai.agents.agent_builder.base_agent")
-    base_agent.BaseAgent = object
+    base_agent.BaseAgent = object # type: ignore
 
     project = ModuleType("crewai.project")
-    project.CrewBase = _identity_decorator
-    project.agent = _identity_decorator
-    project.crew = _identity_decorator
-    project.task = _identity_decorator
+    project.CrewBase = _identity_decorator # type: ignore
+    project.agent = _identity_decorator # type: ignore
+    project.crew = _identity_decorator # type: ignore
+    project.task = _identity_decorator # type: ignore
 
     core_config = ModuleType("configs.core_config")
-    core_config.AGENTS_CONFIG_PATH = {}
-    core_config.TASKS_CONFIG_PATH = {}
+    core_config.AGENTS_CONFIG_PATH = {} # type: ignore
+    core_config.TASKS_CONFIG_PATH = {} # type: ignore
 
     providers = ModuleType("src.llm.providers")
-    providers.create_llm = lambda: "fake-llm"
-    providers.create_ollama_llm = lambda: "fake-critic-llm"
+    providers.create_llm = lambda: "fake-llm" # type: ignore
+    providers.create_ollama_llm = lambda: "fake-critic-llm" # type: ignore
 
     logger = ModuleType("src.utils.logger")
-    logger.APP_LOGGER = _FakeLogger()
-    logger.LLM_LOGGER = _FakeLogger()
+    logger.APP_LOGGER = _FakeLogger() # type: ignore
+    logger.LLM_LOGGER = _FakeLogger() # type: ignore
 
     tools = ModuleType("src.workflow.tools")
-    tools.tools = []
+    tools.tools = [] # type: ignore
 
     dotenv = ModuleType("dotenv")
-    dotenv.load_dotenv = lambda *args, **kwargs: None
+    dotenv.load_dotenv = lambda *args, **kwargs: None # type: ignore
 
     monkeypatch.setitem(sys.modules, "crewai", crewai)
     monkeypatch.setitem(sys.modules, "crewai.agents.agent_builder.base_agent", base_agent)
@@ -98,8 +98,8 @@ def test_kickoff_with_state_sanitizes_inputs_before_crew_execution(monkeypatch):
     assert "jane@example.com" not in crew.app_state.user_input
     assert "4242 4242 4242 4242" not in crew.app_state.user_input
     assert "b" * 32 not in crew.app_state.product_idea
-    assert _FakeCrew.last_instance.stream is False
-    assert _FakeCrew.last_instance.kickoff_inputs == inputs
+    assert _FakeCrew.last_instance.stream is False # type: ignore
+    assert _FakeCrew.last_instance.kickoff_inputs == inputs # type: ignore
     assert "[REDACTED_EMAIL]" in inputs["user_input"]
     assert "[REDACTED_CREDIT_CARD]" in inputs["user_input"]
     assert "[REDACTED_API_KEY]" in inputs["product_idea"]

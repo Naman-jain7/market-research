@@ -21,7 +21,7 @@ def test_sanitize_input_redacts_sensitive_values():
     assert "[REDACTED_CREDIT_CARD]" in sanitized
     assert "[REDACTED_API_KEY]" in sanitized
 
-
+# run same test multiple times with diff input values
 @pytest.mark.parametrize(
     "raw",
     [
@@ -34,6 +34,7 @@ def test_sanitize_input_neutralizes_prompt_injection_phrases(raw):
     sanitized = sanitize_input(raw)
 
     assert sanitized != raw
+
     assert "ignore all previous instructions" not in sanitized.lower()
     assert "disregard developer instructions" not in sanitized.lower()
     assert "exfiltrate secrets" not in sanitized.lower()
@@ -45,6 +46,7 @@ def test_validate_agent_output_uses_pydantic_payload_when_available():
         score=8.2,
         sources=[Citation(title="Example", url="https://example.com/report")],
     )
+    
     output = SimpleNamespace(pydantic=parsed)
 
     result = validate_agent_output(output)

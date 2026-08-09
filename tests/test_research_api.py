@@ -37,7 +37,7 @@ class _FakeMarketResearchCrew:
 
 def import_research_router_with_fake_crew(monkeypatch):
     crew_module = ModuleType("src.workflow.crew")
-    crew_module.MarketResearchCrew = _FakeMarketResearchCrew
+    crew_module.MarketResearchCrew = _FakeMarketResearchCrew # type: ignore
 
     monkeypatch.setitem(sys.modules, "src.workflow.crew", crew_module)
     sys.modules.pop("app.api.research", None)
@@ -63,9 +63,9 @@ def test_research_endpoint_invokes_crew_with_payload_and_returns_state(monkeypat
 
     assert response.status_code == 200
     assert response.json()["market_research"]["text"] == "ok"
-    assert _FakeMarketResearchCrew.last_instance.kickoff_inputs == {
+    assert _FakeMarketResearchCrew.last_instance.kickoff_inputs == { # type: ignore
         "user_id": 42,
         "user_input": "AI market research app",
         "product_idea": "AI market research app",
     }
-    assert _FakeMarketResearchCrew.last_instance.stream is False
+    assert _FakeMarketResearchCrew.last_instance.stream is False # type: ignore
