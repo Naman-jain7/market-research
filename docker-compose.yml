@@ -1,0 +1,83 @@
+name: market-research
+
+x-app-image: &app-image
+  image: ${DOCKERHUB_USERNAME:-local}/market-research:${IMAGE_TAG:-latest}
+  build:
+    context: .
+    dockerfile: Dockerfile
+  env_file:
+    - .env
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: market-research-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-market_research_db}
+      POSTGRES_USER: ${POSTGRES_USER:-market_research}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-market_research_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  api:
+    <<: *app-image
+    container_name: market-research-api
+    environment:
+      DB_DSN: postgresql://${POSTGRES_USER:-market_research}:${POSTGRES_PASSWORD:-market_research_password}@postgres:5432/${POSTGRES_DB:-market_research_db}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - app_logs:/app/logs
+      - app_reports:/app/reports
+      - app_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/docs', timeout=5)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  frontend:
+    <<: *app-image
+    container_name: market-research-frontend
+    command:
+      - streamlit
+      - run
+      - streamlit_app.py
+      - --server.address=0.0.0.0
+      - --server.port=8500
+    environment:
+      DB_DSN: postgresql://${POSTGRES_USER:-market_research}:${POSTGRES_PASSWORD:-market_research_password}@postgres:5432/${POSTGRES_DB:-market_research_db}
+      FASTAPI_URL: http://api:8000/api/v1
+    ports:
+      - "${STREAMLIT_PORT:-8500}:8500"
+    volumes:
+      - app_reports:/app/reports
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8500/_stcore/health', timeout=5)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  postgres_data:
+  app_data:
+  app_logs:
+  app_reports:
