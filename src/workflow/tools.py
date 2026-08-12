@@ -93,11 +93,6 @@ def duckduckgo_search(query: str) -> str:
     return _ddg.run(query)
 
 
-serper_web_search_tool = TracedSerperDevTool(max_usage_count=1)
-
-web_scraping_tool = TracedScrapeWebsiteTool(max_usage_count=1)
-selenium_scraping_tool = TracedSeleniumScrapingTool(max_usage_count=1)
-
 tavily_search_tool = TracedTavilySearchTool()
 tavily_research_tool = TracedTavilyResearchTool()
 
