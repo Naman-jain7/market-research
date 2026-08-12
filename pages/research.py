@@ -1,15 +1,16 @@
-import streamlit as st
 import os
+
 import requests
-from typing import Optional
+import streamlit as st
+
+from src.workflow.state import AppState
 from ui.auth import require_authentication
 from ui.styles import apply_styles, page_header
-from src.workflow.state import AppState
 
 # Initialize an empty default app state just for default values
 app_state = AppState(user_id=0)
 
-API_URL = "http://localhost:8000/api/v1/research"
+API_URL = f"{os.getenv('FASTAPI_URL', 'http://127.0.0.1:8000/api/v1').rstrip('/')}/research"
 
 # Ensure user is logged in
 require_authentication()
@@ -134,7 +135,7 @@ def show_full_output(title: str, text: str):
     st.markdown(text)
 
 # Render agent card component
-def render_agent_card(title: str, text: Optional[str], default_status: str, key_suffix: str, download_filename: str):
+def render_agent_card(title: str, text: str | None, default_status: str, key_suffix: str, download_filename: str):
     with st.container(border=True):
         col_title, col_download = st.columns([2.5, 1])
         with col_title:
@@ -219,7 +220,7 @@ agent_labels = [
     ("Manager Review", st.session_state.research_manager_review_score),
     ("Manager Synthesis", st.session_state.manager_synthesis_score),
 ]
-for col, (label, score) in zip(score_cols, agent_labels):
+for col, (label, score) in zip(score_cols, agent_labels, strict=False):
     with col:
         st.metric(label, f"{score:.1f}" if score is not None else "N/A")
 

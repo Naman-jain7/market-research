@@ -1,9 +1,10 @@
+import os
 from collections.abc import Iterator
 from typing import Any
 import requests
 
 
-API_BASE_URL = "http://127.0.0.1:8000/api/v1"
+API_BASE_URL = os.getenv("FASTAPI_URL", "http://127.0.0.1:8000/api/v1").rstrip("/")
 TIMEOUT_SECONDS = 60
 
 class APIError(RuntimeError):
