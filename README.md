@@ -214,13 +214,6 @@ Once the application is running, enter a product idea in the Streamlit workspace
 
 ---
 
-## 📈 Dataset & Results
-
-- **Dataset**: Real-time web data ingested dynamically via Tavily API search and site content extractors.
-- **Results**: Detailed markdown reports are generated and exported under `reports/`. Each report section contains evidence confidence scores ranging from `0.0` to `10.0`.
-
----
-
 ## 🔮 Future Work
 
 - [ ] **Dynamic Tool Selection**: Expand integrations with Google Trends and real-time financial APIs.
