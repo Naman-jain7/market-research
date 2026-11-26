@@ -137,7 +137,7 @@ LANGCHAIN_PROJECT=market-research
 # LLM Providers (Configure at least one valid provider)
 # 1. Google Gemini
 GEMINI_PROVIDER_NAME=gemini
-GEMINI_MODEL_NAME=gemini-2.5-flash
+GEMINI_DEFAULT_MODEL=gemini-2.5-flash
 GOOGLE_API_KEY=your_google_api_key_here
 GEMINI_PRIORITY=1
 
@@ -147,11 +147,15 @@ OPENROUTER_MODEL_NAME=anthropic/claude-3.5-sonnet
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 OPENROUTER_PRIORITY=2
 
-# 3. Ollama (Optional / Critic LLM)
-OLLAMA_PROVIDER_NAME=ollama
-OLLAMA_MODEL_NAME=deepseek-v3.1:671b-cloud
-OLLAMA_API_KEY=your_ollama_api_key_here
-OLLAMA_PRIORITY=3
+# 3. Ollama Cloud (Optional / Critic LLM)
+OLLAMA_CLOUD_DEFAULT_MODEL=deepseek-v3.1:671b-cloud
+OLLAMA_CLOUD_API_KEY=your_ollama_cloud_api_key_here
+OLLAMA_CLOUD_PRIORITY=3
+
+# 4. Local Ollama (Optional)
+OLLAMA_DEFAULT_MODEL=
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_PRIORITY=4
 
 # Embedding Settings
 HUGGINGFACEHUB_API_TOKEN=your_huggingface_token_here
