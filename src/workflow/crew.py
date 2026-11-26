@@ -3,8 +3,10 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai.project import CrewBase, agent, crew, task
 from dotenv import load_dotenv
 
-from configs.core_config import AGENTS_CONFIG_PATH, TASKS_CONFIG_PATH
-from src.llm.providers import create_llm, create_ollama_llm
+from configs.core import AGENTS_CONFIG_PATH, TASKS_CONFIG_PATH
+from src.llm.gemini import GEMINI_CONFIG, create_gemini_llm
+from src.llm.ollama import OLLAMA_CONFIG, create_ollama_llm
+from src.llm.openrouter import OPENROUTER_CONFIG, create_openrouter_llm
 from src.utils.logger import APP_LOGGER, LLM_LOGGER
 from src.workflow.guardrails import sanitize_input, validate_agent_output
 from src.workflow.state import AgentOutput, AppState
@@ -12,9 +14,30 @@ from src.workflow.tools import tools
 
 load_dotenv()
 
-default_llm = create_llm()
+def _create_default_llm():
+    providers = (
+        (GEMINI_CONFIG, create_gemini_llm),
+        (OPENROUTER_CONFIG, create_openrouter_llm),
+        (OLLAMA_CONFIG, create_ollama_llm),
+    )
+    for config, create in sorted(providers, key=lambda provider: provider[0]["priority"]):
+        if config["model"] and (config is OLLAMA_CONFIG or config.get("api_key")):
+            return create()
 
-critic_llm = create_ollama_llm() or create_llm()
+    raise ValueError("No valid LLM provider configured")
+
+
+def _create_critic_llm():
+    if OPENROUTER_CONFIG["model"] and OPENROUTER_CONFIG["api_key"]:
+        return create_openrouter_llm()
+    if OLLAMA_CONFIG["model"]:
+        return create_ollama_llm()
+    return default_llm
+
+
+default_llm = _create_default_llm()
+critic_llm = _create_critic_llm()
+
 
 @CrewBase
 class MarketResearchCrew:

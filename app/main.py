@@ -9,7 +9,7 @@ from slowapi.errors import RateLimitExceeded
 from app.api.research import limiter
 from app.api.router import api_router
 from app.db.manager import db_manager
-from configs.core_config import settings
+from configs.core import settings
 from src.utils.exception import AppException
 from src.utils.logger import APP_LOGGER
 

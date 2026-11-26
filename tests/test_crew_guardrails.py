@@ -49,13 +49,21 @@ def import_crew_with_fakes(monkeypatch):
     project.crew = _identity_decorator # type: ignore
     project.task = _identity_decorator # type: ignore
 
-    core_config = ModuleType("configs.core_config")
+    core_config = ModuleType("configs.core")
     core_config.AGENTS_CONFIG_PATH = {} # type: ignore
     core_config.TASKS_CONFIG_PATH = {} # type: ignore
 
-    providers = ModuleType("src.llm.providers")
-    providers.create_llm = lambda: "fake-llm" # type: ignore
-    providers.create_ollama_llm = lambda: "fake-critic-llm" # type: ignore
+    gemini = ModuleType("src.llm.gemini")
+    gemini.GEMINI_CONFIG = {"model": "gemini-test", "api_key": "test", "priority": 1} # type: ignore
+    gemini.create_gemini_llm = lambda: "fake-llm" # type: ignore
+
+    openrouter = ModuleType("src.llm.openrouter")
+    openrouter.OPENROUTER_CONFIG = {"model": "", "api_key": None, "priority": 2} # type: ignore
+    openrouter.create_openrouter_llm = lambda: "fake-openrouter-llm" # type: ignore
+
+    ollama = ModuleType("src.llm.ollama")
+    ollama.OLLAMA_CONFIG = {"model": "local-test", "priority": 4} # type: ignore
+    ollama.create_ollama_llm = lambda: "fake-local-llm" # type: ignore
 
     logger = ModuleType("src.utils.logger")
     logger.APP_LOGGER = _FakeLogger() # type: ignore
@@ -70,8 +78,9 @@ def import_crew_with_fakes(monkeypatch):
     monkeypatch.setitem(sys.modules, "crewai", crewai)
     monkeypatch.setitem(sys.modules, "crewai.agents.agent_builder.base_agent", base_agent)
     monkeypatch.setitem(sys.modules, "crewai.project", project)
-    monkeypatch.setitem(sys.modules, "configs.core_config", core_config)
-    monkeypatch.setitem(sys.modules, "src.llm.providers", providers)
+    monkeypatch.setitem(sys.modules, "configs.core", core_config)
+    for provider in (gemini, openrouter, ollama):
+        monkeypatch.setitem(sys.modules, provider.__name__, provider)
     monkeypatch.setitem(sys.modules, "src.utils.logger", logger)
     monkeypatch.setitem(sys.modules, "src.workflow.tools", tools)
     monkeypatch.setitem(sys.modules, "dotenv", dotenv)

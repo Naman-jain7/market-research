@@ -6,6 +6,7 @@ import streamlit as st
 from src.workflow.state import AppState
 from ui.auth import require_authentication
 from ui.styles import apply_styles, page_header
+from configs.core import settings
 
 # Initialize an empty default app state just for default values
 app_state = AppState(user_id=0)
@@ -86,7 +87,7 @@ if st.button("Run Market Analysis", type="primary", use_container_width=True):
                 response = requests.post(
                     API_URL,
                     json=inputs,
-                    timeout=300
+                    timeout=settings.app.API_TIMEOUT
                 )
                 
                 if response.status_code == 200:

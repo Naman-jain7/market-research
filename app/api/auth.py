@@ -6,7 +6,7 @@ import jwt # type: ignore
 from fastapi import APIRouter, Depends # type: ignore
 from fastapi.security import OAuth2PasswordRequestForm # type: ignore
 
-from configs.core_config import settings
+from configs.core import settings
 from app.db.manager import db_manager
 from schemas.user_profile import TokenResponse, UserSignup
 from src.utils.exception import AppException, ConflictError, UnauthenticatedError
